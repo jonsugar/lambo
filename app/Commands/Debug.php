@@ -128,6 +128,7 @@ trait Debug
         $this->logTimezoneData();
 
         $this->consoleWriter->panel('Debug', 'End', 'fg=black;bg=white');
+        exit;
     }
 
     protected function configToTable(): void

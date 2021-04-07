@@ -32,6 +32,8 @@ abstract class LamboConfiguration
     public const TEAMS = 'teams';
     public const GITHUB = 'github';
     public const COMMAND = 'command';
+    public const OPEN_EDITOR = 'open_editor';
+    public const OPEN_BROWSER = 'open_browser';
 
     public function __construct(array $keyMap)
     {

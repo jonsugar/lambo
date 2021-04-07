@@ -20,7 +20,7 @@ class OpenInEditor
 
     public function __invoke()
     {
-        if (config('lambo.store.no_editor')) {
+        if (! $this->shouldOpenInEditor()) {
             return;
         }
 
@@ -30,5 +30,10 @@ class OpenInEditor
         $this->abortIf(! $process->isSuccessful(), sprintf('Failed to open editor %s', config('lambo.store.editor')), $process);
 
         $this->consoleWriter->success('Opening your project in ' . config('lambo.store.editor'));
+    }
+
+    private function shouldOpenInEditor(): bool
+    {
+        return config('lambo.store.editor') && config('lambo.store.open_editor') === true;
     }
 }

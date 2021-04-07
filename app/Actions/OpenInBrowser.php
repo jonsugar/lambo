@@ -19,7 +19,7 @@ class OpenInBrowser
 
     public function __invoke()
     {
-        if (config('lambo.store.no_browser')) {
+        if (! config('lambo.store.open_browser') === true) {
             return;
         }
 

@@ -179,6 +179,8 @@ class NewCommand extends LamboCommand
             'MIGRATE_DATABASE' => LamboConfiguration::MIGRATE_DATABASE,
             'LINK' => LamboConfiguration::VALET_LINK,
             'SECURE' => LamboConfiguration::VALET_SECURE,
+            'OPEN_EDITOR' => LamboConfiguration::OPEN_EDITOR,
+            'OPEN_BROWSER' => LamboConfiguration::OPEN_BROWSER,
         ]);
 
         $shellConfiguration = new ShellConfiguration([
@@ -216,6 +218,8 @@ class NewCommand extends LamboCommand
             LamboConfiguration::GITHUB => false,
             LamboConfiguration::PROJECT_NAME => null,
             LamboConfiguration::TLD => null,
+            LamboConfiguration::OPEN_EDITOR => true,
+            LamboConfiguration::OPEN_BROWSER => true,
         ]);
 
         if ($this->consoleWriter->isDebug()) {
