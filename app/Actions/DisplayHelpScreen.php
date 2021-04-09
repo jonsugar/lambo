@@ -12,7 +12,7 @@ class DisplayHelpScreen
             component('lambo.help', [
                 'newOptions' => (new Options())->all(),
                 'commonOptions' => (new Options())->common(),
-            ])->resolveView()
+            ])->render()
         );
     }
 }
