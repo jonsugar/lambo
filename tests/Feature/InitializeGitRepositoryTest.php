@@ -25,7 +25,7 @@ class InitializeGitRepositoryTest extends TestCase
             ->andReturn(FakeProcess::success());
 
         $this->shell->shouldReceive('execInProject')
-            ->with("git commit --quiet -m 'Initial commit'")
+            ->with('git commit --quiet -m "Initial commit"')
             ->once()
             ->andReturn(FakeProcess::success());
 
@@ -49,7 +49,7 @@ class InitializeGitRepositoryTest extends TestCase
             ->andReturn(FakeProcess::success());
 
         $this->shell->shouldReceive('execInProject')
-            ->with("git commit --quiet -m 'Initial commit'")
+            ->with('git commit --quiet -m "Initial commit"')
             ->once()
             ->andReturn(FakeProcess::success());
 
@@ -109,7 +109,7 @@ class InitializeGitRepositoryTest extends TestCase
             ->andReturn(FakeProcess::success());
 
         $this->shell->shouldReceive('execInProject')
-            ->with("git commit --quiet -m 'Initial commit'")
+            ->with('git commit --quiet -m "Initial commit"')
             ->once()
             ->andReturn(FakeProcess::fail('git commit -m "Initial commit"'));
 
@@ -135,7 +135,7 @@ class InitializeGitRepositoryTest extends TestCase
             ->andReturn(FakeProcess::success());
 
         $this->shell->shouldReceive('execInProject')
-            ->with("git commit -m 'Initial commit'")
+            ->with('git commit -m "Initial commit"')
             ->once()
             ->andReturn(FakeProcess::success());
 

@@ -3,6 +3,7 @@
 namespace App\Actions;
 
 use App\ConsoleWriter;
+use App\Environment;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
 
@@ -19,7 +20,7 @@ class CustomizeDotEnv
     {
         $this->consoleWriter->logStep('Customizing .env and .env.example');
 
-        $filePath = config('lambo.store.project_path') . '/.env.example';
+        $filePath = Environment::toSystemPath(config('lambo.store.project_path') . '/.env.example');
 
         $output = $this->customize(File::get($filePath));
 
@@ -44,7 +45,7 @@ class CustomizeDotEnv
             $replace = $this->value($envKey, $envVal);
 
             return "{$envKey}={$replace}";
-        })->implode("\n");
+        })->implode(PHP_EOL);
     }
 
     public function value($key, $fallback)

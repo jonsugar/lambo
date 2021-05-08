@@ -53,7 +53,7 @@ class ConfigureFrontendFrameworkTest extends TestCase
         $this->composerMissing();
 
         $this->shell->shouldReceive('execInProject')
-            ->with('composer require laravel/jetstream --quiet')
+            ->with('composer require laravel/jetstream --prefer-dist --no-progress --quiet')
             ->once()
             ->andReturn(FakeProcess::fail('composer require laravel/jetstream --quiet'))
             ->globally()

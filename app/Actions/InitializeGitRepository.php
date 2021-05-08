@@ -30,11 +30,13 @@ class InitializeGitRepository
 
         $this->exec('git add .');
 
-        $this->exec(sprintf(
-            "git commit%s -m '%s'",
+        $command = sprintf(
+            'git commit%s -m "%s"',
             config('lambo.store.with_output') ? '' : ' --quiet',
             config('lambo.store.commit_message')
-        ));
+        );
+
+        $this->exec($command);
 
         $this->consoleWriter->success('New git repository initialized.');
     }

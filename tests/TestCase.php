@@ -4,6 +4,7 @@ namespace Tests;
 
 use App\ConsoleWriter;
 use App\Shell;
+use Illuminate\Support\Str;
 use LaravelZero\Framework\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
@@ -56,7 +57,8 @@ abstract class TestCase extends BaseTestCase
 
     protected function center(string $title, string $padChar = ' ', int $lineLength = 80): string
     {
-        return str_pad(str_repeat($padChar, ($lineLength - strlen($title)) / 2) . $title . str_repeat($padChar, ($lineLength - strlen($title)) / 2), $lineLength, $padChar);
+        return str_pad(str_repeat($padChar, ($lineLength - strlen($title)) / 2) . $title
+            . str_repeat($padChar, ($lineLength - strlen($title)) / 2), $lineLength, $padChar);
     }
 
     protected function toSTDOUT($out, string $title = null): void

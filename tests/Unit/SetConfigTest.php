@@ -8,7 +8,9 @@ use App\Configuration\SavedConfiguration;
 use App\Configuration\SetConfig;
 use App\Configuration\ShellConfiguration;
 use App\ConsoleWriter;
+use App\Environment;
 use App\LamboException;
+use http\Env;
 use Illuminate\Support\Facades\File;
 use Tests\Feature\LamboTestEnvironment;
 use Tests\TestCase;
@@ -21,14 +23,14 @@ class SetConfigTest extends TestCase
     function it_sets_the_top_level_domain()
     {
         File::shouldReceive('isFile')
-            ->with(config('home_dir') . '/.config/valet/config.json')
+            ->with(Environment::toSystemPath(config('home_dir') . '/.config/valet/config.json'))
             ->once()
             ->andReturnTrue()
             ->globally()
             ->ordered();
 
         File::shouldReceive('get')
-            ->with(config('home_dir') . '/.config/valet/config.json')
+            ->with(Environment::toSystemPath(config('home_dir') . '/.config/valet/config.json'))
             ->once()
             ->andReturn('{"tld": "mytld"}')
             ->globally()
@@ -48,7 +50,7 @@ class SetConfigTest extends TestCase
     function it_sets_the_top_level_domain_using_legacy_valet_config()
     {
         File::shouldReceive('isFile')
-            ->with(config('home_dir') . '/.config/valet/config.json')
+            ->with(Environment::toSystemPath(config('home_dir') . '/.config/valet/config.json'))
             ->once()
             ->andReturnFalse()
             ->globally()
@@ -56,13 +58,13 @@ class SetConfigTest extends TestCase
 
         File::shouldReceive('isFile')
             ->once()
-            ->with(config('home_dir') . '/.valet/config.json')
+            ->with(Environment::toSystemPath(config('home_dir') . '/.valet/config.json'))
             ->andReturnTrue()
             ->globally()
             ->ordered();
 
         File::shouldReceive('get')
-            ->with(config('home_dir') . '/.valet/config.json')
+            ->with(Environment::toSystemPath(config('home_dir') . '/.valet/config.json'))
             ->once()
             ->andReturn('{"domain": "mytld"}')
             ->globally()
@@ -76,33 +78,6 @@ class SetConfigTest extends TestCase
         ))(['tld' => null]);
 
         $this->assertEquals('mytld', config('lambo.store.tld'));
-    }
-
-    /** @test */
-    function it_throws_a_LamboException_if_valet_config_is_missing()
-    {
-        File::shouldReceive('isFile')
-            ->with(config('home_dir') . '/.config/valet/config.json')
-            ->once()
-            ->andReturnFalse()
-            ->globally()
-            ->ordered();
-
-        File::shouldReceive('isFile')
-            ->once()
-            ->with(config('home_dir') . '/.valet/config.json')
-            ->andReturnFalse()
-            ->globally()
-            ->ordered();
-
-        $this->expectException(LamboException::class);
-
-        (new SetConfig(
-            $this->mock(CommandLineConfiguration::class),
-            $this->mock(SavedConfiguration::class),
-            $this->mock(ShellConfiguration::class),
-            app(ConsoleWriter::class)
-        ))(['tld' => null]);
     }
 
     /** @test */
@@ -335,7 +310,7 @@ class SetConfigTest extends TestCase
         config(['home_dir' => '/home/user']);
 
         $commandLineConfiguration = $this->mock(CommandLineConfiguration::class);
-        $commandLineConfiguration->root_path = '/path/from/command/line';
+        $commandLineConfiguration->root_path =  Environment::toSystemPath('/path/from/command/line');
         $commandLineConfiguration->project_name = 'my-project';
 
         (new SetConfig(
@@ -349,7 +324,9 @@ class SetConfigTest extends TestCase
             'project_name' => null,
         ]);
 
-        $this->assertEquals('/path/from/command/line/my-project', config('lambo.store.project_path'));
+        $this->assertEquals(
+            Environment::toSystemPath('/path/from/command/line/my-project'),
+            config('lambo.store.project_path'));
     }
 
     /** @test */

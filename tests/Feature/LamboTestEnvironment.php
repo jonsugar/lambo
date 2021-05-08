@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Environment;
 use Illuminate\Support\Facades\File;
 
 trait LamboTestEnvironment
@@ -9,7 +10,7 @@ trait LamboTestEnvironment
 
     protected function withValetTld($tld = 'test'): void
     {
-        $valetConfig = config('home_dir') . '/.config/valet/config.json';
+        $valetConfig = Environment::toSystemPath(config('home_dir') . '/.config/valet/config.json');
 
         File::shouldReceive('isFile')
             ->with($valetConfig)

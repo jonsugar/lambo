@@ -4,7 +4,7 @@ namespace App\Configuration;
 
 use App\Commands\NewCommand;
 use App\ConsoleWriter;
-use App\LamboException;
+use App\Environment;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -49,7 +49,7 @@ class SetConfig
         // If we're in the "new" command, generate a few config items which
         // require others to be set above first.
         if (config('lambo.store.command') === NewCommand::class) {
-            $projectPath = config('lambo.store.root_path') . '/' . config('lambo.store.project_name');
+            $projectPath = config('lambo.store.root_path') . DIRECTORY_SEPARATOR . config('lambo.store.project_name');
             config(['lambo.store.project_path' => $projectPath]);
             config(['lambo.store.project_url' => $this->getProjectURL()]);
         }
@@ -80,8 +80,8 @@ class SetConfig
 
     private function getTld(): string
     {
-        $valetConfig = config('home_dir') . '/.config/valet/config.json';
-        $legacyValetConfig = config('home_dir') . '/.valet/config.json';
+        $valetConfig = Environment::toSystemPath(config('home_dir') . '/.config/valet/config.json');
+        $legacyValetConfig = Environment::toSystemPath(config('home_dir') . '/.valet/config.json');
 
         if (File::isFile($valetConfig)) {
             return json_decode(File::get($valetConfig))->tld;
@@ -91,14 +91,27 @@ class SetConfig
             return json_decode(File::get($legacyValetConfig))->domain;
         }
 
-        throw new LamboException(
-            implode(PHP_EOL, [
-                'Unable to find valet domain (tld) configuration.',
-                'No Valet configuration located at either of the following locations:',
-                  "- {$valetConfig}",
-                  "- {$legacyValetConfig}",
-            ])
-        );
+        if (PHP_OS_FAMILY === 'Darwin') {
+            $this->consoleWriter->newLine();
+            $this->consoleWriter->note(implode(PHP_EOL, [
+                'Unable to determine the top-level-domain you use in development.',
+                '',
+                ' No Valet configuration located at either of the following locations:',
+                "   - {$valetConfig}",
+                "   - {$legacyValetConfig}",
+                '',
+                ' Setting top-level-domain to <comment>.test</comment>',
+            ]));
+        }
+        if (PHP_OS_FAMILY !== 'Darwin') {
+            $this->consoleWriter->newLine();
+            $this->consoleWriter->note(implode(PHP_EOL, [
+                'Unable to determine the top-level-domain you use in development.',
+                '',
+                ' Setting top-level-domain to <comment>.test</comment>',
+            ]));
+        }
+        return 'test';
     }
 
     private function getRootPath(string $key, $default)

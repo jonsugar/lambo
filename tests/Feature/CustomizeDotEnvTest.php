@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Actions\CustomizeDotEnv;
+use App\Environment;
 use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
@@ -16,22 +17,11 @@ class CustomizeDotEnvTest extends TestCase
         config(['lambo.store.project_url' => 'http://my-project.example.com']);
         config(['lambo.store.database_username' => 'username']);
         config(['lambo.store.database_password' => 'password']);
-        config(['lambo.store.project_path' => '/some/project/path']);
 
-        $originalDotEnv = File::get(base_path('tests/Feature/Fixtures/.env.original'));
-        $customizedDotEnv = File::get(base_path('tests/Feature/Fixtures/.env.customized'));
-
-        File::shouldReceive('get')
-            ->once()->with('/some/project/path/.env.example')
-            ->andReturn($originalDotEnv);
-
-        File::shouldReceive('put')
-            ->with('/some/project/path/.env.example', $customizedDotEnv);
-
-        File::shouldReceive('put')
-            ->with('/some/project/path/.env', $customizedDotEnv);
-
-        app(CustomizeDotEnv::class)();
+        $this->assertEquals(
+            Environment::toSystemLineSeperators(File::get(base_path('tests/Feature/Fixtures/.env.customized'))),
+            app(CustomizeDotEnv::class)->customize(File::get(base_path('tests/Feature/Fixtures/.env.original')))
+        );
     }
 
     /** @test */
@@ -53,7 +43,7 @@ class CustomizeDotEnvTest extends TestCase
         $customizeDotEnv = app(CustomizeDotEnv::class);
         $contents = "DB_USERNAME=previous\nDONT_TOUCH_ME=cant_touch_me";
         $contents = $customizeDotEnv->customize($contents);
-        $this->assertEquals("DB_USERNAME=root\nDONT_TOUCH_ME=cant_touch_me", $contents);
+        $this->assertEquals(Environment::toSystemLineSeperators("DB_USERNAME=root\nDONT_TOUCH_ME=cant_touch_me"), $contents);
     }
 
     /** @test */
@@ -62,7 +52,10 @@ class CustomizeDotEnvTest extends TestCase
         $customizeDotEnv = app(CustomizeDotEnv::class);
         $contents = "SOME_VALUE=previous\nABCDEFGNOEQUALS";
         $contents = $customizeDotEnv->customize($contents);
-        $this->assertEquals("SOME_VALUE=previous\nABCDEFGNOEQUALS", $contents);
+        $this->assertEquals(
+            Environment::toSystemLineSeperators("SOME_VALUE=previous\nABCDEFGNOEQUALS"),
+            $contents
+        );
     }
 
     /** @test */
@@ -71,6 +64,9 @@ class CustomizeDotEnvTest extends TestCase
         $customizeDotEnv = app(CustomizeDotEnv::class);
         $contents = "A=B\n\nC=D";
         $contents = $customizeDotEnv->customize($contents);
-        $this->assertEquals("A=B\n\nC=D", $contents);
+        $this->assertEquals(
+            Environment::toSystemLineSeperators("A=B\n\nC=D"),
+            $contents
+        );
     }
 }
