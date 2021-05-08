@@ -58,7 +58,7 @@ class ConfigureFrontendFramework
 
         $this->consoleWriter->note('Installing required composer package laravel/jetstream.');
 
-        $process = $this->shell->execInProject('composer require laravel/jetstream' . (config('lambo.store.with_output') ? '' : ' --quiet'));
+        $process = $this->shell->execInProject('composer require laravel/jetstream --prefer-dist --no-progress' . (config('lambo.store.with_output') ? '' : ' --quiet'));
 
         $this->abortIf(! $process->isSuccessful(), 'Installation of laravel/jetstream did not complete successfully.', $process);
 

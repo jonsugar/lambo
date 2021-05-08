@@ -23,7 +23,7 @@ class InstallLaravel
         $this->consoleWriter->logStep('Creating the new Laravel project');
 
         $process = $this->shell->execInRoot(sprintf(
-            'composer create-project laravel/laravel %s%s --remove-vcs --prefer-dist %s',
+            'composer create-project laravel/laravel %s%s --remove-vcs --prefer-dist --no-progress %s',
             config('lambo.store.project_name'),
             config('lambo.store.dev') ? ' dev-master' : '',
             config('lambo.store.with_output') ? '' : '--quiet'
